@@ -54,14 +54,26 @@ module "codecommit-application" {
   repository_name = "elo7-docker-application"
 }
 
-// CodeBuild Terraform plan & Terraform apply
-module "codebuild" {
-  source                                 = "./modules/codebuild"
-  codebuild_project_terraform_plan_name  = "TerraformPlan"
-  codebuild_project_terraform_apply_name = "TerraformApply"
-  s3_logging_bucket_id                   = module.bootstrap.s3_logging_bucket_id
-  codebuild_iam_role_arn                 = module.bootstrap.codebuild_iam_role_arn
-  s3_logging_bucket                      = module.bootstrap.s3_logging_bucket
+// CodeBuild Terraform plan 
+module "codebuild-terraform_plan" {
+  source                 = "./modules/codebuild"
+  codebuild_project_name = "TerraformPlan"
+  buildspec              = "buildspec_terraform_plan.yml"
+  group_name             = "codebuild/terraform"
+  s3_logging_bucket_id   = module.bootstrap.s3_logging_bucket_id
+  codebuild_iam_role_arn = module.bootstrap.codebuild_iam_role_arn
+  s3_logging_bucket      = module.bootstrap.s3_logging_bucket
+}
+
+// CodeBuild Terraform apply
+module "codebuild-terraform_apply" {
+  source                 = "./modules/codebuild"
+  codebuild_project_name = "TerraformApply"
+  buildspec              = "buildspec_terraform_apply.yml"
+  group_name             = "codebuild/terraform"
+  s3_logging_bucket_id   = module.bootstrap.s3_logging_bucket_id
+  codebuild_iam_role_arn = module.bootstrap.codebuild_iam_role_arn
+  s3_logging_bucket      = module.bootstrap.s3_logging_bucket
 }
 
 // CodePipeline
@@ -72,6 +84,6 @@ module "codepipeline" {
   codepipeline_role_name            = "TerraformCodePipelineIamRole"
   codepipeline_role_policy_name     = "TerraformCodePipelineIamRolePolicy"
   terraform_codecommit_repo_name    = module.codecommit.terraform_codecommit_repo_name
-  codebuild_terraform_plan_name     = module.codebuild.codebuild_terraform_plan_name
-  codebuild_terraform_apply_name    = module.codebuild.codebuild_terraform_apply_name
+  codebuild_terraform_plan_name     = module.codebuild-terraform_plan.codebuild_terraform_plan_name
+  codebuild_terraform_apply_name    = module.codebuild-terraform_apply.codebuild_terraform_apply_name
 }

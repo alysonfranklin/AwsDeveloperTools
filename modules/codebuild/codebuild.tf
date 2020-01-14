@@ -1,6 +1,6 @@
 # Criando projeto CodeBuild para o Terraform plan
 resource "aws_codebuild_project" "codebuild_project_terraform_plan" {
-  name          = var.codebuild_project_terraform_plan_name
+  name          = var.codebuild_project_name
   description   = "CodeBuild - Projeto Terraform plan"
   build_timeout = "5"
   service_role  = var.codebuild_iam_role_arn
@@ -30,19 +30,20 @@ resource "aws_codebuild_project" "codebuild_project_terraform_plan" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "codebuild"
+      group_name  = var.group_name
       stream_name = "log-stream"
     }
 
     s3_logs {
       status   = "ENABLED"
-      location = "${var.s3_logging_bucket_id}/${var.codebuild_project_terraform_plan_name}/build-log"
+      location = "${var.s3_logging_bucket_id}/${var.codebuild_project_name}/build-log"
     }
   }
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "buildspec_terraform_plan.yml"
+    buildspec = var.buildspec
+#    buildspec = "buildspec_terraform_plan.yml"
   }
 
   tags = {
@@ -51,9 +52,10 @@ resource "aws_codebuild_project" "codebuild_project_terraform_plan" {
 }
 
 
+/*
 # Criando projeto CodeBuild para o Terraform apply
 resource "aws_codebuild_project" "codebuild_project_terraform_apply" {
-  name          = var.codebuild_project_terraform_apply_name
+  name          = var.codebuild_project_name
   description   = "CodeBuild - Projeto Terraform apply"
   build_timeout = "5"
   service_role  = var.codebuild_iam_role_arn
@@ -88,7 +90,7 @@ resource "aws_codebuild_project" "codebuild_project_terraform_apply" {
 
     s3_logs {
       status   = "ENABLED"
-      location = "${var.s3_logging_bucket_id}/${var.codebuild_project_terraform_apply_name}/build-log"
+      location = "${var.s3_logging_bucket_id}/${var.codebuild_project_name}/build-log"
     }
   }
 
@@ -101,3 +103,4 @@ resource "aws_codebuild_project" "codebuild_project_terraform_apply" {
     Terraform = "true"
   }
 }
+*/
