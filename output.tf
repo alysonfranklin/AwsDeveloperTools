@@ -7,6 +7,11 @@ output "clone_url_ssh" {
   value       = module.codecommit.clone_url_ssh
 }
 
+output "clone_url_ssh-application" {
+  description = "URL for cloning the repository with SSH"
+  value       = module.codecommit-application.clone_url_ssh
+}
+
 /*
 output "arn_codecommit" {
   value = module.codecommit.terraform_codecommit_repo_arn
