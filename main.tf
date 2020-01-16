@@ -1,11 +1,11 @@
-// Requer versão igual ou superior à 0.12.17
+// Requer versão igual ou superior à 0.12.18
 
 
 // Descomente esse bloco depois que o AWS DeveloperTools for provisionado
 
 /*
 terraform {
-  required_version = ">=0.12.17"
+  required_version = ">=0.12.18"
   backend "s3" {
     bucket         = "elo7-devops-engineer"
     key            = "terraform/developer_tools-elo7/terraform.tfstate"
@@ -19,7 +19,7 @@ terraform {
 // Provider
 provider "aws" {
   region  = "us-east-1"
-  version = "~> 2.36.0"
+ # version = "~> 2.36.0"
 
 }
 
