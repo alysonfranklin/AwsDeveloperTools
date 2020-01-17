@@ -43,7 +43,6 @@ resource "aws_codebuild_project" "codebuild_project_terraform_plan" {
   source {
     type      = "CODEPIPELINE"
     buildspec = var.buildspec
-#    buildspec = "buildspec_terraform_plan.yml"
   }
 
   tags = {
