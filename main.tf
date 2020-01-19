@@ -5,7 +5,6 @@
 
 /*
 terraform {
-  required_version = "=0.12.16"
   backend "s3" {
     bucket         = "elo7-devops-engineer"
     key            = "terraform/developer_tools-elo7/terraform.tfstate"
@@ -18,8 +17,8 @@ terraform {
 
 // Provider
 provider "aws" {
-  region  = "us-east-1"
-  # version = "~> 2.36.0"
+  region = "us-east-1"
+  #version = "~> 2.36.0"
 
 }
 

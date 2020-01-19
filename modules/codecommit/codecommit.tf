@@ -17,5 +17,5 @@ output "terraform_codecommit_repo_name" {
 
 output "clone_url_ssh" {
   description = "URL for cloning the repository with SSH"
-  value = aws_codecommit_repository.repo.clone_url_ssh
+  value       = aws_codecommit_repository.repo.clone_url_ssh
 }
