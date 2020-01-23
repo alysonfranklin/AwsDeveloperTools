@@ -15,6 +15,10 @@ Este código foi criado para provisionar os serviços AWS Developer Tools (CodeC
 ```
 # Aviso!
 Caso dê o erro **"Error creating CodeBuild project: InvalidInputException"** ou **"Error putting S3 versioning: OperationAborted: A conflicting conditional operation is currently in progress against this resource. Please try again"**, execute terraform apply --auto-approve novamente. Este erro é intermitente e ainda não parei pra ver se é por causa da versão (0.12.19) do Terraform ou outra coisa.
+
+##### OBS:
+Caso seja exibido um erro diferente, provavelmente é porque o bucket já existe em outra conta da AWS. Altere o nome do bucket no arquivo main.tf (s3_tfstate_bucket, s3_logging_bucket_name & codepipeline_artifact_bucket_name).
+
 ![N|Solid](https://i.imgur.com/MVVLucg.png)
 Depois que configurar seu usuário git para ter acesso ao repositório criado no CodeCommit, copie seu código terraform para o repositório informado e faça o commit. Após o commit, o CodePipeline será acionado automaticamente.
 
