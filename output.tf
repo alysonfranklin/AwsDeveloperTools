@@ -1,11 +1,6 @@
 output "clone_url_ssh" {
-  description = "URL for cloning the repository with SSH"
+  description = "URL do repositório"
   value       = module.codecommit.clone_url_ssh
-}
-
-output "clone_url_ssh-application" {
-  description = "URL for cloning the repository with SSH"
-  value       = module.codecommit-application.clone_url_ssh
 }
 
 /*

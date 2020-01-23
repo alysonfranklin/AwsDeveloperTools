@@ -47,12 +47,6 @@ module "codecommit" {
   repository_name = "repo-elo7-devops_engineer"
 }
 
-// CodeCommit
-module "codecommit-application" {
-  source          = "./modules/codecommit"
-  repository_name = "elo7-docker-application"
-}
-
 // CodeBuild Terraform plan 
 module "codebuild-terraform_plan" {
   source                 = "./modules/codebuild"
