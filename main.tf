@@ -1,7 +1,7 @@
 // Requer versão igual ou superior à 0.12.16
 
-
-// Descomente esse bloco depois que o AWS DeveloperTools for provisionado
+// Descomente o bloco abaixo depois que o AWS DeveloperTools
+// for provisionado e execute terraform apply --auto-aprove
 
 /*
 terraform {
@@ -18,8 +18,22 @@ terraform {
 // Provider
 provider "aws" {
   region = "us-east-1"
-  #version = "~> 2.36.0"
+ #version = "~> 2.36.0"
 
+}
+
+data "aws_caller_identity" "current" {
+}
+
+resource "aws_ssm_parameter" "account_id" {
+  name  = "account_id"
+  description = "ID da conta AWS criptografado usando chave KMS default"
+  type  = "SecureString"
+  value = data.aws_caller_identity.current.account_id
+
+  tags = {
+    Name = "Account_ID"
+  }
 }
 
 
