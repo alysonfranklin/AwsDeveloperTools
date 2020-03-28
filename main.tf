@@ -41,14 +41,14 @@ resource "aws_ssm_parameter" "account_id" {
 
 // Cria uma tabela no DynamoDB para lock do estado do terraform
 module "dynamodb" {
-  source               = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source               = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/dynamodb?ref=v0.0.1"
   dynamo_db_table_name = "developer_tools-dne-terraforming_locking"
 }
 
 // Cria um bucket S3 para o estado do Terraform
 // Se o bucket não existir, ele cria um novo. Se existir, ele usa o bucket existente
 module "bootstrap" {
-  source                              = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source                              = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/bootstrap?ref=v0.0.1"
   s3_tfstate_bucket                   = "appversion-control-dne"
   s3_logging_bucket_name              = "appversion-control-dne"
   codebuild_iam_role_name             = "CodeBuildIamRole"
@@ -59,19 +59,19 @@ module "bootstrap" {
 
 // CodeCommit - Infra as code
 module "codecommit" {
-  source          = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source          = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/codecommit?ref=v0.0.1"
   repository_name = "infra_as_code-dne"
 }
 
 // CodeCommit - developer_tools
 module "codecommit-developer_tools" {
-  source          = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source          = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/codecommit?ref=v0.0.1"
   repository_name = "developer_tools"
 }
 
 // CodeBuild Terraform plan 
 module "codebuild-terraform_plan" {
-  source                 = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source                 = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/codebuild?ref=v0.0.1"
   codebuild_project_name = "TerraformPlan"
   buildspec              = "buildspec_terraform_plan.yml"
   group_name             = "codebuild/terraform"
@@ -82,7 +82,7 @@ module "codebuild-terraform_plan" {
 
 // CodeBuild Terraform apply
 module "codebuild-terraform_apply" {
-  source                 = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source                 = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/codebuild?ref=v0.0.1"
   codebuild_project_name = "TerraformApply"
   buildspec              = "buildspec_terraform_apply.yml"
   group_name             = "codebuild/terraform"
@@ -93,7 +93,7 @@ module "codebuild-terraform_apply" {
 
 // CodePipeline
 module "codepipeline" {
-  source                            = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  source                            = "git::git@github.com:alysonfranklin/AwsDeveloperTools.git//modules/codepipeline?ref=v0.0.1"
   codepipeline_name                 = "TerraformCodePipeline"
   codepipeline_artifact_bucket_name = "appversion-control-dne"
   codepipeline_role_name            = "TerraformCodePipelineIamRole"
