@@ -1,9 +1,10 @@
 // Cria um bucket S3 para armazenar o estado do terraform
 resource "aws_s3_bucket" "state_bucket" {
-  bucket = var.s3_tfstate_bucket
-  force_destroy = true
+  bucket        = var.s3_tfstate_bucket
+  force_destroy = false
+  acl           = "private"
 
-// Criptografa o bucket s3 em repouso por padrão
+  // Criptografa o bucket s3 em repouso por padrão
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
@@ -12,18 +13,19 @@ resource "aws_s3_bucket" "state_bucket" {
     }
   }
 
-// Habilita versionamento no bucket
+  // Habilita versionamento no bucket
   versioning {
     enabled = true
+    // mfa_delete	= true // Só funciona com a conta raíz da AWS 
   }
 
 }
 
 // Cria um bucket s3 para log
 resource "aws_s3_bucket" "s3_logging_bucket" {
-  bucket = var.s3_logging_bucket_name
-  acl    = "private"
-  force_destroy = true
+  bucket        = var.s3_logging_bucket_name
+  acl           = "private"
+  force_destroy = false
 
   server_side_encryption_configuration {
     rule {

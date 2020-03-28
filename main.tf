@@ -6,10 +6,10 @@
 /*
 terraform {
   backend "s3" {
-    bucket         = "elo7-devops-engineer"
-    key            = "terraform/developer_tools-elo7/terraform.tfstate"
+    bucket         = "appversion-control-dne"
+    key            = "terraform/developer_tools-dne/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "developer_tools-elo7-terraform-locking"
+    dynamodb_table = "developer_tools-dne-terraforming_locking"
     encrypt        = true
   }
 }
@@ -18,7 +18,7 @@ terraform {
 // Provider
 provider "aws" {
   region = "us-east-1"
- #version = "~> 2.36.0"
+  #version = "~> 2.36.0"
 
 }
 
@@ -26,44 +26,52 @@ data "aws_caller_identity" "current" {
 }
 
 resource "aws_ssm_parameter" "account_id" {
-  name  = "account_id"
+  name        = "account_id"
   description = "ID da conta AWS criptografado usando chave KMS default"
-  type  = "SecureString"
-  value = data.aws_caller_identity.current.account_id
+  type        = "SecureString"
+  value       = data.aws_caller_identity.current.account_id
 
   tags = {
-    Name = "Account_ID"
+    Name        = "Account_ID"
+    Environment = "Prod"
+    Project     = "DNE"
   }
 }
 
 
 // Cria uma tabela no DynamoDB para lock do estado do terraform
 module "dynamodb" {
-  source               = "./modules/dynamodb"
-  dynamo_db_table_name = "developer_tools-elo7-terraform-locking"
+  source               = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  dynamo_db_table_name = "developer_tools-dne-terraforming_locking"
 }
 
 // Cria um bucket S3 para o estado do Terraform
 // Se o bucket não existir, ele cria um novo. Se existir, ele usa o bucket existente
 module "bootstrap" {
-  source                              = "./modules/bootstrap"
-  s3_tfstate_bucket                   = "elo7-devops-engineer"
-  s3_logging_bucket_name              = "elo7-devops-engineer"
+  source                              = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  s3_tfstate_bucket                   = "appversion-control-dne"
+  s3_logging_bucket_name              = "appversion-control-dne"
   codebuild_iam_role_name             = "CodeBuildIamRole"
   codebuild_iam_role_policy_name      = "CodeBuildIamRolePolicy"
   terraform_codecommit_repo_arn       = module.codecommit.terraform_codecommit_repo_arn
   tf_codepipeline_artifact_bucket_arn = module.codepipeline.tf_codepipeline_artifact_bucket_arn
 }
 
-// CodeCommit
+// CodeCommit - Infra as code
 module "codecommit" {
-  source          = "./modules/codecommit"
-  repository_name = "repo-elo7-devops_engineer"
+  source          = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  repository_name = "infra_as_code-dne"
+}
+
+// CodeCommit - developer_tools
+module "codecommit-developer_tools" {
+  source          = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
+  repository_name = "developer_tools"
 }
 
 // CodeBuild Terraform plan 
 module "codebuild-terraform_plan" {
-  source                 = "./modules/codebuild"
+  source                 = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
   codebuild_project_name = "TerraformPlan"
   buildspec              = "buildspec_terraform_plan.yml"
   group_name             = "codebuild/terraform"
@@ -74,7 +82,7 @@ module "codebuild-terraform_plan" {
 
 // CodeBuild Terraform apply
 module "codebuild-terraform_apply" {
-  source                 = "./modules/codebuild"
+  source                 = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
   codebuild_project_name = "TerraformApply"
   buildspec              = "buildspec_terraform_apply.yml"
   group_name             = "codebuild/terraform"
@@ -85,9 +93,9 @@ module "codebuild-terraform_apply" {
 
 // CodePipeline
 module "codepipeline" {
-  source                            = "./modules/codepipeline"
+  source                            = "github.com/alysonfranklin/AwsDeveloperTools?ref=v0.0.1"
   codepipeline_name                 = "TerraformCodePipeline"
-  codepipeline_artifact_bucket_name = "elo7-devops-engineer"
+  codepipeline_artifact_bucket_name = "appversion-control-dne"
   codepipeline_role_name            = "TerraformCodePipelineIamRole"
   codepipeline_role_policy_name     = "TerraformCodePipelineIamRolePolicy"
   terraform_codecommit_repo_name    = module.codecommit.terraform_codecommit_repo_name
